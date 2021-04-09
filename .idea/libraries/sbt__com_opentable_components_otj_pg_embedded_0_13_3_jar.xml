@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="sbt: com.opentable.components:otj-pg-embedded:0.13.3:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/opentable/components/otj-pg-embedded/0.13.3/otj-pg-embedded-0.13.3.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/opentable/components/otj-pg-embedded/0.13.3/otj-pg-embedded-0.13.3-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/opentable/components/otj-pg-embedded/0.13.3/otj-pg-embedded-0.13.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
