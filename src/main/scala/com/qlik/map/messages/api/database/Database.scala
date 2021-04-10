@@ -10,7 +10,7 @@ object Database {
   def getMongoDbConfig ()= ???
 
   def getMongoDatabase: Task[MongoCollection[Document]] = {
-    val uri: String = "mongodb+srv://new-user-101:tF7wdxEb9v5KWUpo@cluster0.l1jnn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+    val uri: String = ""
     System.setProperty("org.mongodb.async.type", "netty")
     val client: MongoClient = MongoClient(uri)
     val DbConnection: MongoDatabase = client.getDatabase("myFirstDatabase")
