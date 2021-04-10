@@ -1,4 +1,4 @@
-package com.qlik.map.messages.api
+package com.qlik.map.message.api
 
 import java.security.MessageDigest
 

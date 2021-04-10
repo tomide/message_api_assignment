@@ -1,6 +1,6 @@
-FROM openjdk:11-slim as build-stage
+FROM openjdk:8-slim as build-stage
 
-ENV sbt_version 1.4.7
+ENV sbt_version 1.3.7
 ENV sbt_home /usr/local/sbt
 ENV PATH ${PATH}:${sbt_home}/bin
 
@@ -20,12 +20,14 @@ RUN chown -R builder: ${BUILDER_HOME}
 
 USER builder
 
-RUN sbt -mem 2048 assembly exit
+#RUN sbt -mem 2048 clean assembly exit
+
+RUN sbt -mem 2048 'set test in assembly := {}' clean assembly exit
 
 #
 # Docker File for Scala Application microservice
 #
-FROM openjdk:11-slim
+FROM openjdk:8-slim
 
 # Make directory for the run scripts
 RUN mkdir -p /root/scripts

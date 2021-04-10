@@ -1,7 +1,8 @@
 package com.qlik.map.message.api
 
-import com.qlik.map.messages.api.Util.{isWordPalindrome, md5Harsher}
-import com.qlik.map.messages.apiService.feedBack
+import com.qlik.map.message.api.Util.{isWordPalindrome, md5Harsher}
+import com.qlik.map.message.messageApiService._
+
 import org.mongodb.scala.Document
 
 trait TestFixture {

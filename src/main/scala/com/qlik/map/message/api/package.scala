@@ -1,4 +1,4 @@
-package com.qlik.map.messages
+package com.qlik.map.message
 
 import io.circe.generic.auto._
 import io.circe.generic.extras.semiauto._
@@ -10,7 +10,7 @@ import scala.util.control.NoStackTrace
 
 
 
-package object apiService {
+package object messageApiService {
 
   /**
   - Create, retrieve, update, and delete a message

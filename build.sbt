@@ -20,7 +20,7 @@ lazy val root = (project in file("."))
     name := "message-API",
     version := "0.0.1-SNAPSHOT",
     scalaVersion := "2.12.2",
-    scalacOptions ++= Seq( "-deprecation"),
+    scalacOptions +=  "-deprecation",
     libraryDependencies ++= Seq(
       "com.github.scopt" %% "scopt" % Scopt,
       "org.http4s" %% "http4s-blaze-server" % Http4sVersion,
@@ -55,8 +55,6 @@ lazy val root = (project in file("."))
       "org.mongodb" % "mongodb-driver-core" % "3.6.4",
       "org.mongodb" % "bson" % "3.12.2",
       "org.mongodb" % "mongodb-driver-async" % "3.6.4",
-      "io.netty" % "netty-buffer" % "4.1.63.Final",
-      "io.netty" % "netty-common" % "4.1.63.Final",
       "io.netty" % "netty-all" % "4.1.63.Final",
       "de.flapdoodle.embed"         %   "de.flapdoodle.embed.mongo"   % "1.48.0"    % "test",
       "org.mongodb"                 %%  "casbah"                      % "3.1.1"     % "test",

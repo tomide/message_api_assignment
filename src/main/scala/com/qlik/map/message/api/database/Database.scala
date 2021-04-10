@@ -1,4 +1,5 @@
-package com.qlik.map.messages.api.database
+package com.qlik.map.message.api.database
+
 import monix.eval.Task
 import org.mongodb.scala.{Document, MongoClient, MongoCollection, MongoDatabase}
 

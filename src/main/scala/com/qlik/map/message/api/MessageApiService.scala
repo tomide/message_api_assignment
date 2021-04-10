@@ -1,8 +1,7 @@
-package com.qlik.map.messages.api
+package com.qlik.map.message.api
 
-
-import com.qlik.map.messages.api.Util.{isWordPalindrome, isWordValid, md5Harsher}
-import com.qlik.map.messages.apiService._
+import com.qlik.map.message.api.Util.{isWordPalindrome, isWordValid, md5Harsher}
+import com.qlik.map.message.messageApiService._
 import com.typesafe.scalalogging.StrictLogging
 import monix.eval.Task
 import org.mongodb.scala.model.Filters

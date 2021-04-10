@@ -1,6 +1,5 @@
-package com.qlik.map.messages.api
+package com.qlik.map.message.api
 
-import com.qlik.map.messages.apiService.{InvalidWordError, NoRecordFound, ResponseError, createRequest, deleteRequest, feedBack, retrieveRequest, updateRequest}
 import org.http4s.HttpRoutes
 import com.typesafe.scalalogging.StrictLogging
 import io.circe.{Decoder, Encoder}
@@ -10,6 +9,7 @@ import io.circe.syntax.EncoderOps
 import monix.eval.Task
 import org.http4s.circe.CirceEntityCodec.{circeEntityDecoder, circeEntityEncoder}
 import org.http4s.dsl.Http4sDsl
+import com.qlik.map.message.messageApiService.{InvalidWordError, NoRecordFound, ResponseError, createRequest, deleteRequest, feedBack, retrieveRequest, updateRequest}
 
 /**
 - Create, retrieve, update, and delete a message

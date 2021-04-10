@@ -6,7 +6,7 @@
 `docker tag tom-messageservice localhost:5000/tom-messageservice`
 3. Push to local Docker repo\
 `docker push localhost:5000/tom-messageservice`
-4. Start PostgreSQL and UserService\
+4. Start MessageService\
 `docker-compose up`
 
 Now you can hit our endpoint at `localhost:5000/create_message`
