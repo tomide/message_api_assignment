@@ -20,7 +20,7 @@ lazy val root = (project in file("."))
     name := "message-API",
     version := "0.0.1-SNAPSHOT",
     scalaVersion := "2.12.2",
-    scalacOptions += "-deprecation",
+    scalacOptions ++= Seq( "-deprecation"),
     libraryDependencies ++= Seq(
       "com.github.scopt" %% "scopt" % Scopt,
       "org.http4s" %% "http4s-blaze-server" % Http4sVersion,
@@ -47,28 +47,32 @@ lazy val root = (project in file("."))
       "org.reactormonk" %% "cryptobits" % "1.3",
       "com.github.jwt-scala" %% "jwt-core" % "7.1.1",
       "com.github.pureconfig" %% "pureconfig" % "0.14.1",
+      "org.mongodb" % "mongo-java-driver" % "3.12.2",
+      "org.mongodb" % "mongo-java-driver" % "3.6.4"    % "test",
+      "org.mongodb" % "mongodb-driver" % "3.6.4"    % "test",
       "org.mongodb.scala" %% "mongo-scala-driver" % "2.9.0",
       "org.mongodb.scala" %% "mongo-scala-bson" % "2.9.0",
-      "org.mongodb" % "mongodb-driver-core" % "3.12.2",
+      "org.mongodb" % "mongodb-driver-core" % "3.6.4",
       "org.mongodb" % "bson" % "3.12.2",
-      "org.mongodb" % "mongodb-driver-async" % "3.12.2",
+      "org.mongodb" % "mongodb-driver-async" % "3.6.4",
       "io.netty" % "netty-buffer" % "4.1.63.Final",
       "io.netty" % "netty-common" % "4.1.63.Final",
       "io.netty" % "netty-all" % "4.1.63.Final",
-      "org.mongodb"                 %%  "casbah"                      % "3.1.1"     % "test",
       "de.flapdoodle.embed"         %   "de.flapdoodle.embed.mongo"   % "1.48.0"    % "test",
+      "org.mongodb"                 %%  "casbah"                      % "3.1.1"     % "test",
       "com.github.simplyscala"      %%  "scalatest-embedmongo"        % "0.2.4"     % "test",
     ),
     addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1"),
     addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3"),
   )
   .enablePlugins(JavaAppPackaging)
+  .enablePlugins(DockerPlugin)
 
 resolvers ++= Seq("snapshots", "releases").map(Resolver.sonatypeRepo)
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 assemblyOption in assembly := (assemblyOption in assembly).value.copy(cacheOutput = false)
-assemblyJarName in assembly := "meesageAPI.jar"
+assemblyJarName in assembly := "messageApiService.jar"
 
 cancelable in Global := true
 fork in Global := true

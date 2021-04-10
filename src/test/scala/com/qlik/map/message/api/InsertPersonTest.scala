@@ -1,11 +1,11 @@
 package com.qlik.map.message.api
 
-import com.mongodb.{DBObject, Mongo}
-import com.mongodb.casbah.{MongoCollection, MongoConnection, MongoDB}
-import org.scalatest.FunSuite
+import com.mongodb.{DBObject}
+import com.mongodb.casbah.{MongoCollection, MongoConnection}
 import org.scalatest.BeforeAndAfter
 import com.github.simplyscala.MongodProps
 import com.github.simplyscala.MongoEmbedDatabase
+import com.mongodb.casbah.Imports.{MongoClient, MongoDB}
 import com.mongodb.casbah.commons.MongoDBObject
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -13,7 +13,7 @@ class InsertPersonTest extends AnyFunSuite with BeforeAndAfter with MongoEmbedDa
 
   object DBConnector {
     // Connect to default - localhost, 27017
-    val mongoConn: MongoConnection = MongoConnection()
+    val mongoConn: MongoClient = MongoClient.apply()
     //Create a testDB
     val mongoDB: MongoDB = mongoConn("testDB")
     //returns a collection
@@ -40,7 +40,7 @@ class InsertPersonTest extends AnyFunSuite with BeforeAndAfter with MongoEmbedDa
 
 
   //declares a variable which will hold the reference to running mongoDB Instance
-  var mongoInstance: MongodProps = null
+  var mongoInstance: MongodProps = _
   // Start In-memory Mongo instance in before statement
   before {
     try{ mongoInstance = mongoStart(27017) } //Try starting mongo on this default port

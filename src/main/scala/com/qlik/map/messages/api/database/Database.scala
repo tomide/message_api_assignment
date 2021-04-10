@@ -7,6 +7,8 @@ trait Database
 
 object Database {
 
+  def getMongoDbConfig ()= ???
+
   def getMongoDatabase: Task[MongoCollection[Document]] = {
     val uri: String = "mongodb+srv://new-user-101:tF7wdxEb9v5KWUpo@cluster0.l1jnn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
     System.setProperty("org.mongodb.async.type", "netty")
