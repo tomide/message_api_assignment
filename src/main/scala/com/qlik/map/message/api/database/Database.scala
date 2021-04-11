@@ -2,13 +2,11 @@ package com.qlik.map.message.api.database
 import monix.eval.Task
 import org.mongodb.scala.{Document, MongoClient, MongoCollection, MongoDatabase}
 
-
 /**
- * Database is generic trait and can be easily implemented to have more methods
+ * Database is a generic trait and can be easily implemented to have more methods
  *
- * getMongoDBCollection methods returns collection from mangoDb object. this is the collection where all the messages will be stored
+ * getMongoDBCollection methods returns a collection from mangoDb object. this is the collection where all the messages will be stored
  * */
-
 
 trait Database
 

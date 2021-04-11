@@ -7,7 +7,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 
 
 /**
- * configManager returns a singleton Object of type DeploymentParam, which combines the server settings and database configuration setting together
+ * configManager returns a singleton Object of type DeploymentParam, which combines the server settings and database configuration settings
  * */
 
 case class DeploymentParam (DbParam: DbConnectionParams, serverParam: ServerConfig)

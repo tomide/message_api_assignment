@@ -61,7 +61,7 @@ package object messageApiService {
   }
 
   case object InvalidWordError extends BackEndApiError {
-    override def message: String = "invalid word. Please remove spaces and numbers between the word"
+    override def message: String = "invalid word. Please remove numeric values from the message"
   }
 
   case class NoRecordFound(messageSent: String) extends BackEndApiError {
