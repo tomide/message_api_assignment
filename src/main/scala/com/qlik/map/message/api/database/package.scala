@@ -1,5 +1,9 @@
 package com.qlik.map.message.api
 
+/**
+ * package object used to store data types used for connecting to database instances
+ * */
+
 package object database {
 
   case class DbUrl(value: String) extends AnyVal

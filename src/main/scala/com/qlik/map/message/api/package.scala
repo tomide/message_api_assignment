@@ -13,28 +13,26 @@ import scala.util.control.NoStackTrace
 package object messageApiService {
 
   /**
-  - Create, retrieve, update, and delete a message
-  - List messages
-  */
-
-
+   * package object describes ADT, decoders and encoders used in converting bytes sent to the end-point/server as request and
+   * sent back to the client as request. it also converts encoders and decoders for errors messages
+   * */
 
   /**
    * Request ADTs
    */
-  case class createRequest(word: String) extends AnyVal
+  case class createRequest(message: String) extends AnyVal
   implicit val createMessageDecoder: Decoder[createRequest] = deriveUnwrappedDecoder
   implicit val createMessageEncoder: Encoder[createRequest] = deriveUnwrappedEncoder
 
-  case class retrieveRequest(word: String) extends AnyVal
+  case class retrieveRequest(message: String) extends AnyVal
   implicit val retrieveMessageDecoder: Decoder[retrieveRequest] = deriveUnwrappedDecoder
   implicit val retrieveMessageEncoder: Encoder[retrieveRequest] = deriveUnwrappedEncoder
 
-  case class updateRequest(oldWord: String, newWord: String)
+  case class updateRequest(oldMessage: String, newMessage: String)
   implicit val updateMessageDecoder: EntityDecoder[Task, updateRequest] = jsonOf[Task, updateRequest]
   implicit val updateMessageEncoder: EntityEncoder[Task, updateRequest] = jsonEncoderOf[Task, updateRequest]
 
-  case class deleteRequest(word: String, reason: String)
+  case class deleteRequest(message: String, reason: String)
   implicit val deleteMessageDecoder: EntityDecoder[Task, deleteRequest] = jsonOf[Task, deleteRequest]
   implicit val userRequestEntityEncoder: EntityEncoder[Task, deleteRequest] = jsonEncoderOf[Task, deleteRequest]
 
@@ -63,17 +61,16 @@ package object messageApiService {
   }
 
   case object InvalidWordError extends BackEndApiError {
-    override def message: String = "inValid word. Please remove spaces and numbers between the word"
+    override def message: String = "invalid word. Please remove spaces and numbers between the word"
   }
 
-  case class NoRecordFound(word: String) extends BackEndApiError {
-    override def message: String = s"No record found for id - $word"
+  case class NoRecordFound(messageSent: String) extends BackEndApiError {
+    override def message: String = s"No record found for message :- $messageSent"
   }
 
   case class MessageSavingError(errorMessage: String) extends BackEndApiError {
     override def message: String = errorMessage
   }
-
 
   case class ResponseError(message: String)
   implicit val responseErrorJsonDecoder: EntityDecoder[Task, ResponseError] = jsonOf[Task, ResponseError]

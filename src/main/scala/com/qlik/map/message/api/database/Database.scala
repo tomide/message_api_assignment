@@ -3,10 +3,17 @@ import monix.eval.Task
 import org.mongodb.scala.{Document, MongoClient, MongoCollection, MongoDatabase}
 
 
+/**
+ * Database is generic trait and can be easily implemented to have more methods
+ *
+ * getMongoDBCollection methods returns collection from mangoDb object. this is the collection where all the messages will be stored
+ * */
+
+
 trait Database
 
 object MongoDbDatabase extends Database {
-   def getMongoDatabase (connectionParams: DbConnectionParams): Task[MongoCollection[Document]] = {
+   def getMongoDBCollection (connectionParams: DbConnectionParams): Task[MongoCollection[Document]] = {
     val uri: String = connectionParams.dbUrlSuffix.value +
                       connectionParams.userName.value + ":" +
                       connectionParams.password.value +
@@ -14,7 +21,8 @@ object MongoDbDatabase extends Database {
     System.setProperty("org.mongodb.async.type", "netty")
     val client: MongoClient = MongoClient(uri)
     val DbConnection: MongoDatabase = client.getDatabase(connectionParams.dbName.value)
-    Task.now(DbConnection.getCollection(connectionParams.collectionName.value))
+     val collection : MongoCollection[Document] = DbConnection.getCollection(connectionParams.collectionName.value)
+    Task.now(collection)
   }
 }
 

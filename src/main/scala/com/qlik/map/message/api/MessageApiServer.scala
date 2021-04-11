@@ -36,7 +36,7 @@ object MessageApiServer extends TaskApp with StrictLogging with DefaultInstrumen
   private def serverStream(configLocation: Option[String]): Stream[Task, ExitCode] =
     for {
       config <- Stream.apply(ConfigManager(configLocation))
-      collection <- Stream.eval(MongoDbDatabase.getMongoDatabase(config.DbParam))
+      collection <- Stream.eval(MongoDbDatabase.getMongoDBCollection(config.DbParam))
       implicit0(messageService: MessageApiService) = new MessageApiServiceIO(collection)
       messageRoute = MessageApiRoutes.apply
       httpApp = Metrics(Dropwizard(metricRegistry, "server"))(

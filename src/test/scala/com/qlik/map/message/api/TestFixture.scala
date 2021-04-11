@@ -1,6 +1,6 @@
 package com.qlik.map.message.api
 
-import com.qlik.map.message.api.Util.{isWordPalindrome, md5Harsher}
+import com.qlik.map.message.api.MessageApiUtil.{isWordPalindrome, md5Harsher}
 import com.qlik.map.message.messageApiService._
 
 import org.mongodb.scala.Document
@@ -21,9 +21,9 @@ trait TestFixture {
 
   val someValidMessage = "Palindrome"
 
-  val someValidCreateMessage = s"""{"word": "${someValidMessage}"}"""
+  val someValidCreateMessage = s"""{"message": "${someValidMessage}"}"""
 
-  val someValidCreateResponse = s""" {"response": "word: sure boy has been updated"}"""
+  val someValidCreateResponse = s""" {"response": "created_word: $someValidMessage, is_word_palindrome: false"}"""
 
 
 }

@@ -57,9 +57,12 @@ lazy val root = (project in file("."))
       "org.mongodb" % "bson" % "3.12.2",
       "org.mongodb" % "mongodb-driver-async" % "3.6.4",
       "io.netty" % "netty-all" % "4.1.63.Final",
-      "de.flapdoodle.embed"         %   "de.flapdoodle.embed.mongo"   % "1.48.0"    % "test",
+      "de.flapdoodle.embed"         %   "de.flapdoodle.embed.mongo"   % "3.0.0"    % "test",
       "org.mongodb"                 %%  "casbah"                      % "3.1.1"     % "test",
       "com.github.simplyscala"      %%  "scalatest-embedmongo"        % "0.2.4"     % "test",
+      "de.flapdoodle.embed" % "de.flapdoodle.embed.process" % "3.0.1"      % "test",
+      "org.testcontainers" % "testcontainers" % "1.15.2" % Test,
+      "org.testcontainers" % "mongodb" % "1.15.2" % Test
     ),
     addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1"),
     addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3"),
