@@ -1,5 +1,6 @@
 package com.qlik.map.message.api
 
+import cats.effect.ExitCase.complete
 import com.qlik.map.message.api.MessageApiUtil.{compressMessage, isWordPalindrome, isWordValid, md5Harsher}
 import com.qlik.map.message.messageApiService._
 import com.typesafe.scalalogging.StrictLogging
@@ -36,32 +37,24 @@ object MessageApiService {
 
 class MessageApiServiceIO(collection: MongoCollection[Document]) extends MessageApiService with StrictLogging {
 
-
   override def createMessage(req: createRequest): Task[feedBack] = {
-
     val compressedMessage = compressMessage(req.message)
-
     if (isWordValid(compressedMessage)) {
-
       val _id = md5Harsher(req.message)
       val message = req.message
       val palindrome = isWordPalindrome(compressedMessage)
-
       val document = Seq(Document("_id" -> _id, "message" -> message, "is_word_palindrome" -> palindrome))
-
       val insertObservable = collection.insertMany(document)
-
+      var status : Boolean = false
       insertObservable.subscribe(new Observer[Completed] {
-        override def onNext(result: Completed): Unit = println(s"onNext: $result")
-
-        override def onError(e: Throwable): Unit = new Throwable (e)
-
-        override def onComplete(): Unit = println("onComplete")
-      })
-
-      Task.now(feedBack(s"created_word: $message, is_word_palindrome: ${palindrome.toString}"))
+              override def onNext(result: Completed): Unit = logger.info(s"saved message for $message")
+              override def onError(e: Throwable): Unit = logger.error(s" $e"); status = true
+              override def onComplete(): Unit = logger.info(s"**** completed transmission on requested $message")
+            })
+     if (status) Task.eval(feedBack(s"message: '$message' already exist, is_word_palindrome: ${palindrome.toString}"))
+     else Task.eval(feedBack(s"created_message: $message, is_word_palindrome: ${palindrome.toString}"))
     }
-    else Task.raiseError(InvalidWordError)
+     else Task.raiseError(InvalidWordError)
   }
 
   override def retrieveMessage(req: retrieveRequest): Task[retrieveResponse] = {
