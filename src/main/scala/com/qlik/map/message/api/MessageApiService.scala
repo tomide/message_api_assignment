@@ -50,15 +50,6 @@ class MessageApiServiceIO(collection: MongoCollection[Document]) extends Message
         case Right(c) => Task.now(feedBack(s"created_message: $message, is_word_palindrome: ${palindrome.toString}"))
         case Left(e) => Task.raiseError(MessageSavingError("message already exist in database"))
       }
-
-      //      insertObservable.subscribe(new Observer[Completed] {
-      //        override def onNext(result: Completed): Unit = logger.info(s"saved message for $message -- ${Calendar.getInstance().getTime}")
-      //        override def onError(e: Throwable): Unit = logger.error(s" onError:  $e   -- ${Calendar.getInstance().getTime} ")
-      //        override def onComplete(): Unit = logger.info(s"**** completed transmission on requested $message -- ${Calendar.getInstance().getTime}")
-      //      })
-      //      Task.now(feedBack(s"created_message: $message, is_word_palindrome: ${palindrome.toString}"))
-      //      }
-      //      else Task.raiseError(InvalidWordError)
     }
     else Task.raiseError(InvalidWordError)
   }
