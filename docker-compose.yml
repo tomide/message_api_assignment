@@ -9,6 +9,13 @@ services:
     networks:
       - default
       - outside
+    environment:
+      - DB_URLPREFIX=mongodb+srv://
+      - DB_MONGODBURL=@cluster0.l1jnn.mongodb.net
+      - DB_USERNAME=new-user-101
+      - DB_PASSWORD=tF7wdxEb9v5KWUpo
+      - DB_DBNAME=myFirstDatabase
+      - DB_COLLECTONNAME=test
     ports:
       - 8080:8080
     expose:

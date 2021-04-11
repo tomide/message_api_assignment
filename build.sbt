@@ -23,6 +23,7 @@ lazy val root = (project in file("."))
     scalacOptions +=  "-deprecation",
     libraryDependencies ++= Seq(
       "com.github.scopt" %% "scopt" % Scopt,
+      "com.typesafe" % "config" % "1.4.1",
       "org.http4s" %% "http4s-blaze-server" % Http4sVersion,
       "org.http4s" %% "http4s-blaze-client" % Http4sVersion,
       "org.http4s" %% "http4s-circe" % Http4sVersion,
