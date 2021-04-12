@@ -1,12 +1,16 @@
-# Http4s User Service
+# Http4s Message Service
 ## Local Setup
 1. Build Docker image\
-`docker build -t tom-messageservice .`
+`docker build -t messageservice .`
 2. Tag local Docker repo\
-`docker tag tom-messageservice localhost:5000/tom-messageservice`
-3. Push to local Docker repo\
-`docker push localhost:5000/tom-messageservice`
+`docker tag messageservice localhost:5000/messageservice`
+3. If you do not have a registry yet then run this command. else skip to next step
+`docker run -d -p 5000:5000 --restart=always --name registry registry:2`
+4. Push to local Docker repo\
+`docker push localhost:5000/messageservice`
+5. If you have not created an outside network yet, then run command. else skip to next step
+`docker network create outside`
 4. Start MessageService\
 `docker-compose up`
 
-Now you can hit our endpoint at `localhost:5000/create_message`
+Now you can hit our endpoint at `localhost:8080/create_message`
