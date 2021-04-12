@@ -1,6 +1,6 @@
 package com.qlik.map.message.api
 
-import com.qlik.map.message.api.{MessageApiRoutes, MessageApiServiceIO, TestFixture}
+
 import io.circe.Decoder.decodeString
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
 import io.circe.{Decoder, Encoder}
@@ -15,7 +15,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.testcontainers.containers.MongoDBContainer
 import org.testcontainers.utility.DockerImageName
-import com.qlik.map.message.messageApiService._
+
 
 class CreateMessageSpec extends AnyFunSuite
   with BeforeAndAfterAll
@@ -23,10 +23,12 @@ class CreateMessageSpec extends AnyFunSuite
   with TestFixture
   with Matchers {
 
-  def check[A](actual: Task[Response[Task]],
+
+  def checkFeedBack[A](actual: Task[Response[Task]],
                expectedStatus: Status,
                expectedBody: Option[A])
               (implicit ev : Decoder[A]): Boolean = {
+    import com.qlik.map.message.messageApiService._
 
     implicit val feedBackEncoder: Encoder[feedBack] = deriveEncoder[feedBack]
     implicit val feedBackDecoder: Decoder[feedBack] = deriveDecoder[feedBack]
@@ -60,28 +62,11 @@ override def beforeAll {
     mongoDBContainer.stop()
   }
 
-  test("should return a status of created and response of created message with a boolean representing if word is palindrome of not") {
-    val response: Task[Response[Task]] = MessageApiRoutes(new MessageApiServiceIO(collection)).orNotFound.run(
-      Request(method = Method.POST, uri = uri"/create_message" ).withEntity(someValidCreateMessage))
-    check[String](response, Status.Ok, Some(someValidCreateResponse))
-  }
-
-  test("should return a status of not allowed if numeric value in message and response of created message with a boolean representing if word is palindrome of not") {
-    val response: Task[Response[Task]] = MessageApiRoutes(new MessageApiServiceIO(collection)).orNotFound.run(
-      Request(method = Method.POST, uri = uri"/create_message" ).withEntity(someValidCreateMessage))
-    check[String](response, Status.Ok, Some(someValidCreateResponse))
-  }
 
   test("should return a status of created and response of created message with a boolean representing if word is palindrome of not") {
     val response: Task[Response[Task]] = MessageApiRoutes(new MessageApiServiceIO(collection)).orNotFound.run(
       Request(method = Method.POST, uri = uri"/create_message" ).withEntity(someValidCreateMessage))
-    check[String](response, Status.Ok, Some(someValidCreateResponse))
-  }
-
-  test("should return a status of created and response of created message with a boolean representing if word is palindrome of not") {
-    val response: Task[Response[Task]] = MessageApiRoutes(new MessageApiServiceIO(collection)).orNotFound.run(
-      Request(method = Method.POST, uri = uri"/create_message" ).withEntity(someValidCreateMessage))
-    check[String](response, Status.Ok, Some(someValidCreateResponse))
+    checkFeedBack[String](response, Status.Ok, Some(someValidCreateResponse))
   }
 
 

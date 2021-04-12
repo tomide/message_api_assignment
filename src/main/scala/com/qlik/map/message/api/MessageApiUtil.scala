@@ -13,7 +13,7 @@ object MessageApiUtil {
     if (hash(0).toString == "-") hash.slice(1, hash.length) else hash
   }
   def isWordValid(message: String): Boolean = if (!message.exists(_.isDigit)) true else false
-  def isWordPalindrome(message: String): Boolean = if (message.reverse == message) true else false
-  def compressMessage(message: String): String = message.replaceAll("[-+.^:,]","")
+  def isWordPalindrome(message: String): Boolean = if (compressMessage(message.reverse) == compressMessage(message)) true else false
+  def compressMessage(message: String): String = message.replaceAll("[-+.^:,]","").replaceAll(" ","")
 
 }

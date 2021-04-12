@@ -1,12 +1,10 @@
 package com.qlik.map.message.api
 
-import com.qlik.map.message.api.{MessageApiRoutes, MessageApiServiceIO, TestFixture}
 import io.circe.Decoder.decodeString
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
 import io.circe.{Decoder, Encoder}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
-import org.http4s.circe.CirceEntityCodec.circeEntityDecoder
 import org.http4s.implicits.{http4sKleisliResponseSyntaxOptionT, http4sLiteralsSyntax}
 import org.http4s.{Method, Request, Response, Status}
 import org.mongodb.scala.{Document, MongoClient, MongoCollection, MongoDatabase}
@@ -15,6 +13,9 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.testcontainers.containers.MongoDBContainer
 import org.testcontainers.utility.DockerImageName
+
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 
 class RetrieveMessageSpec extends AnyFunSuite
   with BeforeAndAfterAll
@@ -33,11 +34,7 @@ class RetrieveMessageSpec extends AnyFunSuite
     val actualResp = actual.runSyncUnsafe()
     println(actualResp.status)
     val statusCheck = actualResp.status == expectedStatus
-    val bodyCheck = expectedBody.fold[Boolean](
-      actualResp.body.compile.toVector.runSyncUnsafe().isEmpty)( // Verify Response's body is empty.
-      expected => actualResp.as[feedBack].runSyncUnsafe() == expected
-    )
-    statusCheck && bodyCheck
+    statusCheck
   }
 
   var mongoDBContainer : MongoDBContainer = _
@@ -50,6 +47,7 @@ class RetrieveMessageSpec extends AnyFunSuite
     val client: MongoClient = MongoClient(mongoDBContainer.getReplicaSetUrl())
     val DbConnection: MongoDatabase = client.getDatabase("test")
     collection = DbConnection.getCollection("test")
+    Await.ready(collection.insertMany(someValidDocument).toFuture(), Duration.Inf).value.get
   }
 
 
@@ -59,13 +57,10 @@ class RetrieveMessageSpec extends AnyFunSuite
     mongoDBContainer.stop()
   }
 
-  test("create message") {
-    import com.qlik.map.message.messageApiService._
+  test("should return a specific message based on the request url parameter") {
     val response: Task[Response[Task]] = MessageApiRoutes(new MessageApiServiceIO(collection)).orNotFound.run(
       Request(method = Method.POST, uri = uri"/create_message" ).withEntity(someValidCreateMessage))
-
     check[String](response, Status.Ok, Some(someValidCreateResponse))
-
   }
 
 }

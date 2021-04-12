@@ -1,9 +1,8 @@
 package com.qlik.map.message.api
 
-import cats.effect.ExitCode
 import cats.implicits._
 import fs2.Stream
-import monix.eval.{Task, TaskApp}
+import monix.eval.TaskApp
 import cats.effect.ExitCode
 import com.qlik.map.message.api.config.ConfigManager
 import com.qlik.map.message.api.database.MongoDbDatabase
@@ -14,8 +13,12 @@ import org.http4s.implicits._
 import org.http4s.metrics.dropwizard.Dropwizard
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.server.middleware._
-
 import scala.collection.immutable.Seq
+
+/**
+ * Main entry point to the Application. This object Binds the config parameter for bother server and database, routes, and connection to database together. it also the
+ * binding point for middleware if we were to include them.
+ * */
 
 
 object MessageApiServer extends TaskApp with StrictLogging with DefaultInstrumented {

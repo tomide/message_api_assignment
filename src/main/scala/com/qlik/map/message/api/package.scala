@@ -74,6 +74,7 @@ package object messageApiService {
 
   case class ResponseError(message: String)
   implicit val responseErrorJsonDecoder: EntityDecoder[Task, ResponseError] = jsonOf[Task, ResponseError]
+  implicit val responseErrorJsonEncoder: EntityEncoder[Task, ResponseError] = jsonEncoderOf[Task, ResponseError]
   implicit def responseErrorDecoder: EntityDecoder[Task, ResponseError] = jsonOf[Task, ResponseError]
   implicit def responseErrorEncoder: EntityEncoder[Task, ResponseError] = jsonEncoderOf[Task, ResponseError]
 

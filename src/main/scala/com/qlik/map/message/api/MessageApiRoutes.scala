@@ -14,21 +14,33 @@ import org.mongodb.scala.{MongoBulkWriteException, MongoException}
 /**
 - This MessageApiRoutes object holds the routes used by the server.
  there are 5 routes currently implemented;
- 1. / create_message :-
-this is route accepts a post request in the following format { "message" : "<valid_message>" }
-(NB: A valid message is a message that does contain any numerical values) and returns a response base on the following conditions :
+
+(NB: A valid message is a message that does contain any numerical values)
+
+ 1. create message route / create_message :-
+this route accepts a post request in the following format { "message" : "<valid_message>" }
      a. if valid message is received, this enpoint should return :- { "response": "created_word: <your_message>, is_word_palindrome: <Boolean>" }
      b. if valid message is received and message already exist in database, this endpoint should return :- { "response": "message: '<your_message>' already exist, is_word_palindrome: <Boolean>" }
 
-  2. /message/ <your_message> :-
-this is route accepts a get request, with a message at the end of the request api
+  2. retrieve message route  => / message / <your_message> :-
+this route accepts a get request, with a message at the end of the request api
      a. if existing message is received, this end point should return :- { "response": "message: <your_message>, is_word_palindrome: <Boolean>" }
      b. if non existing message is received, this endpoint should return :- { "message: <your_message> not in database" }
 
+  3. delete message route => / delete /<your_message> :-
+this route accepts a delete request, with a message at the end of the request api
+     a. if existing message is received, this end point should return :- { "response": "message: <your_message> was deleted" }
+     b. if non existing message is received, this endpoint should return :- { "message: <your_message> not in database" }
 
+   4. update message route / message / <old_message> :-
+this route accepts a get request, with a message at the end of the request api
+     a. if existing message is received, this end point should return :- { "response": "old_message: <old_message> has been updated with new message :- <new_message_in_body>" }
+     b. if non existing message is received, this endpoint should return :- { "message: <your_message> not in database" }
 
-
-
+  5. list message route => / list message :-
+this route accepts a get request, with a message at the end of the request api
+     a. if existing message is received, this end point should return :- { ["response": "message: <your_message>, is_word_palindrome: <Boolean>"] }
+     b. if no existing message is in database then it should return {"response": no message in database }
 
  */
 
@@ -47,7 +59,7 @@ object MessageApiRoutes extends StrictLogging {
           createdMessage <- messageService.createMessage(decodedReq)
           result <- Created(createdMessage)
         } yield result).onErrorHandleWith {
-          case e : MessageSavingError =>  BadRequest(ResponseError(e.message).asJson)
+          case e : MessageSavingError =>  NotAcceptable(ResponseError(e.message).asJson)
           case e: NoRecordFound =>  NotFound(ResponseError(e.message).asJson)
           case InvalidWordError =>  NotAcceptable(ResponseError(InvalidWordError.message).asJson)
           case _ => BadRequest(ResponseError("badly formed request. please check api documentation").asJson)
@@ -66,7 +78,7 @@ object MessageApiRoutes extends StrictLogging {
         }
 
       //added word as endpoint parameter just to show that they can been combined.
-      case req @ PUT -> Root / old_message =>
+      case req @ PUT -> Root / "message" / old_message =>
         (for {
           _ <- messageService.retrieveMessage(retrieveRequest(old_message))
           newWord <- req.as[createRequest]
@@ -90,7 +102,7 @@ object MessageApiRoutes extends StrictLogging {
           case _ => BadRequest(ResponseError("badly formed request. please check api documentation").asJson)
         }
 
-      case DELETE -> Root / message =>
+      case DELETE -> Root / "message" / message =>
         (for {
           _ <- messageService.retrieveMessage(retrieveRequest(message))
           allObservables <- messageService.deleteMessage(deleteRequest(message))
