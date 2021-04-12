@@ -13,6 +13,24 @@ val EmbeddedPG = "0.13.3"
 val MockServer = "4.3.1"
 val catsCore = "2.1.1"
 val smile = "2.6.0"
+val cryptobitsVersion = "1.3"
+val jwtCoreVersion = "7.1.1"
+val pureConfig = "0.14.1"
+val MongoDbJavaDriverVersion = "3.12.2"
+val MongoDbScalaDriverVersion = "2.9.0"
+val MongoDbScalaBsonVersion = "2.9.0"
+val MongoDbDriveCoreVersion = "3.6.4"
+val BsonVersion = "3.12.2"
+val MongoDbDriveAsyncVersion = "3.6.4"
+val nettyAllVersion = "4.1.63.Final"
+val flapDoodleEmbedMongoDbTestVersion = "3.0.0"
+val flapDoodleEmbedProcessTestVersion = "3.0.1"
+val cashBashTestVersion = "3.1.1"
+val scalaTestEmbedMongoDbTestVersion = "0.2.4"
+val testContainersTestVersion = "1.15.2"
+val MongoDbContainerTestVersion = "1.15.2"
+val MongoDbJavaDriverTestVersion = "3.6.4"
+val MongoDbDriverTestVersion =  "3.6.4"
 
 lazy val root = (project in file("."))
   .settings(
@@ -22,47 +40,47 @@ lazy val root = (project in file("."))
     scalaVersion := "2.12.2",
     scalacOptions +=  "-deprecation",
     libraryDependencies ++= Seq(
-      "com.github.scopt" %% "scopt" % Scopt,
-      "com.typesafe" % "config" % "1.4.1",
-      "org.http4s" %% "http4s-blaze-server" % Http4sVersion,
-      "org.http4s" %% "http4s-blaze-client" % Http4sVersion,
-      "org.http4s" %% "http4s-circe" % Http4sVersion,
-      "org.http4s" %% "http4s-dsl" % Http4sVersion,
-      "org.http4s" %% "http4s-dropwizard-metrics" % Http4sVersion,
-      "io.circe" %% "circe-generic" % CirceVersion,
-      "io.circe" %% "circe-generic-extras" % CirceVersion,
-      "io.circe" %% "circe-config" % CirceConfigVersion,
-      "io.monix" %% "monix" % MonixVersion,
-      "org.tpolecat" %% "doobie-core" % doobieVersion,
-      "org.tpolecat" %% "doobie-postgres" % doobieVersion,
-      "org.tpolecat" %% "doobie-hikari" % doobieVersion,
+      "com.github.scopt"        %% "scopt" % Scopt,
+      "com.typesafe"             % "config" % "1.4.1",
+      "org.http4s"              %% "http4s-blaze-server" % Http4sVersion,
+      "org.http4s"              %% "http4s-blaze-client" % Http4sVersion,
+      "org.http4s"              %% "http4s-circe" % Http4sVersion,
+      "org.http4s"              %% "http4s-dsl" % Http4sVersion,
+      "org.http4s"              %% "http4s-dropwizard-metrics" % Http4sVersion,
+      "io.circe"                %% "circe-generic" % CirceVersion,
+      "io.circe"                %% "circe-generic-extras" % CirceVersion,
+      "io.circe"                %% "circe-config" % CirceConfigVersion,
+      "io.monix"                %% "monix" % MonixVersion,
+      "org.tpolecat"            %% "doobie-core" % doobieVersion,
+      "org.tpolecat"            %% "doobie-postgres" % doobieVersion,
+      "org.tpolecat"            %% "doobie-hikari" % doobieVersion,
       "com.typesafe.scala-logging" %% "scala-logging" % SLoggingVersion,
-      "ch.qos.logback" % "logback-classic" % LogbackVersion,
-      "nl.grons" %% "metrics4-scala" % Metrics4Scala,
-      "org.typelevel" %% "cats-core" % catsCore,
-      "com.github.haifengl" % "smile-core" % smile,
-      "org.scalatest" %% "scalatest" % ScalaTestVersion % Test,
-      "org.mockito" %% "mockito-scala" % Mockito % Test,
+      "ch.qos.logback"           % "logback-classic" % LogbackVersion,
+      "nl.grons"                %% "metrics4-scala" % Metrics4Scala,
+      "org.typelevel"           %% "cats-core" % catsCore,
+      "com.github.haifengl"      % "smile-core" % smile,
+      "org.reactormonk"         %% "cryptobits"                    % cryptobitsVersion,
+      "com.github.jwt-scala"    %% "jwt-core"                      % jwtCoreVersion,
+      "com.github.pureconfig"   %% "pureconfig"                    % pureConfig,
+      "org.mongodb"              % "mongo-java-driver"             % MongoDbJavaDriverVersion,
+      "org.mongodb.scala"       %% "mongo-scala-driver"            % MongoDbScalaDriverVersion,
+      "org.mongodb.scala"       %% "mongo-scala-bson"              % MongoDbScalaBsonVersion,
+      "org.mongodb"              % "mongodb-driver-core"           % MongoDbDriveCoreVersion,
+      "org.mongodb"              % "bson"                          % BsonVersion,
+      "org.mongodb"              % "mongodb-driver-async"          % MongoDbDriveAsyncVersion,
+      "io.netty"                 % "netty-all"                     % nettyAllVersion,
+      "de.flapdoodle.embed"      %   "de.flapdoodle.embed.mongo"   % flapDoodleEmbedMongoDbTestVersion    % "test",
+      "org.mongodb"             %%  "casbah"                       % cashBashTestVersion                  % "test",
+      "com.github.simplyscala"  %%  "scalatest-embedmongo"         % scalaTestEmbedMongoDbTestVersion     % "test",
+      "de.flapdoodle.embed"      % "de.flapdoodle.embed.process"   % flapDoodleEmbedProcessTestVersion    % "test",
+      "org.testcontainers"       % "testcontainers"                % testContainersTestVersion            % Test,
+      "org.testcontainers"       % "mongodb"                       % MongoDbContainerTestVersion          % Test,
+      "org.mongodb"              % "mongo-java-driver"             % MongoDbJavaDriverTestVersion         % "test",
+      "org.mongodb"              % "mongodb-driver"                % MongoDbDriverTestVersion             % "test",
+      "org.scalatest"           %% "scalatest" % ScalaTestVersion % Test,
+      "org.mockito"             %% "mockito-scala" % Mockito % Test,
       "com.opentable.components" % "otj-pg-embedded" % EmbeddedPG % Test,
-      "com.squareup.okhttp3" % "mockwebserver" % MockServer % Test,
-      "org.reactormonk" %% "cryptobits" % "1.3",
-      "com.github.jwt-scala" %% "jwt-core" % "7.1.1",
-      "com.github.pureconfig" %% "pureconfig" % "0.14.1",
-      "org.mongodb" % "mongo-java-driver" % "3.12.2",
-      "org.mongodb" % "mongo-java-driver" % "3.6.4"    % "test",
-      "org.mongodb" % "mongodb-driver" % "3.6.4"    % "test",
-      "org.mongodb.scala" %% "mongo-scala-driver" % "2.9.0",
-      "org.mongodb.scala" %% "mongo-scala-bson" % "2.9.0",
-      "org.mongodb" % "mongodb-driver-core" % "3.6.4",
-      "org.mongodb" % "bson" % "3.12.2",
-      "org.mongodb" % "mongodb-driver-async" % "3.6.4",
-      "io.netty" % "netty-all" % "4.1.63.Final",
-      "de.flapdoodle.embed"         %   "de.flapdoodle.embed.mongo"   % "3.0.0"    % "test",
-      "org.mongodb"                 %%  "casbah"                      % "3.1.1"     % "test",
-      "com.github.simplyscala"      %%  "scalatest-embedmongo"        % "0.2.4"     % "test",
-      "de.flapdoodle.embed" % "de.flapdoodle.embed.process" % "3.0.1"      % "test",
-      "org.testcontainers" % "testcontainers" % "1.15.2" % Test,
-      "org.testcontainers" % "mongodb" % "1.15.2" % Test
+      "com.squareup.okhttp3"     % "mockwebserver" % MockServer % Test
     ),
     addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1"),
     addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3"),
