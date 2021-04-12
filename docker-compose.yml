@@ -5,7 +5,7 @@ networks:
     external: true
 services:
   userservice:
-    image: tom-messageservice:latest
+    image: messageservice:latest
     networks:
       - default
       - outside
