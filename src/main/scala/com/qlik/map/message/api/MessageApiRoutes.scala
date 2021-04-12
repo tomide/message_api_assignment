@@ -66,15 +66,17 @@ object MessageApiRoutes extends StrictLogging {
         }
 
       //added word as endpoint parameter just to show that they can been combined.
-      case req @ PUT -> Root / word =>
+      case req @ PUT -> Root / old_message =>
         (for {
+          _ <- messageService.retrieveMessage(retrieveRequest(old_message))
           newWord <- req.as[createRequest]
-          decodedReq <- Task.now(updateRequest(word, newWord.message))
+          decodedReq <- Task.now(updateRequest(old_message, newWord.message))
           allObservables <- messageService.updateMessage(decodedReq)
           allMessages <- Ok(allObservables)
         } yield allMessages).onErrorHandleWith {
           case e: NoRecordFound =>  NotFound(ResponseError(e.message).asJson)
           case e: InvalidWordError.type =>  NotAcceptable(ResponseError(e.message).asJson)
+          case e: NoSuchElementException => NotFound(ResponseError(s" message : $old_message not in database").asJson)
           case _ => BadRequest(ResponseError("badly formed request. please check api documentation").asJson)
         }
 
