@@ -10,7 +10,7 @@ import org.http4s.{Method, Request, Response, Status}
 import org.mongodb.scala.{Document, MongoClient, MongoCollection, MongoDatabase}
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Succeeded}
 import org.testcontainers.containers.MongoDBContainer
 import org.testcontainers.utility.DockerImageName
 
@@ -61,8 +61,8 @@ class DeleteMessageSpec extends AnyFunSuite
 
   test("should delete message based on request url") {
     val response: Task[Response[Task]] = MessageApiRoutes(new MessageApiServiceIO(collection)).orNotFound.run(
-      Request(method = Method.DELETE, uri = uri"/madam" ))
-    assert(check[String](response, Status.Ok, Some(someValidCreateResponse))).shouldBe (true)
+      Request(method = Method.DELETE, uri = uri"/message/madam" ))
+    assert(check[String](response, Status.Ok, Some(someValidCreateResponse))).shouldBe (Succeeded)
 
   }
 

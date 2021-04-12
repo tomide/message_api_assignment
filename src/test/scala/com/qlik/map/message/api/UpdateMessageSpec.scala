@@ -10,7 +10,7 @@ import org.http4s.{Method, Request, Response, Status}
 import org.mongodb.scala.{Document, MongoClient, MongoCollection, MongoDatabase}
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Succeeded}
 import org.testcontainers.containers.MongoDBContainer
 import org.testcontainers.utility.DockerImageName
 
@@ -60,8 +60,8 @@ class UpdateMessageSpec extends AnyFunSuite
 
   test("should update old message with new message") {
     val response: Task[Response[Task]] = MessageApiRoutes(new MessageApiServiceIO(collection)).orNotFound.run(
-      Request(method = Method.PUT, uri = uri"/madam" ).withEntity(someValidCreateMessage))
-    assert(check[String](response, Status.Ok, Some(someValidCreateMessage))).shouldBe(true)
+      Request(method = Method.PUT, uri = uri"/message/madam" ).withEntity(someValidCreateMessage))
+    assert(check[String](response, Status.Ok, Some(someValidCreateMessage))).shouldBe(Succeeded)
 
   }
 

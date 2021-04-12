@@ -10,7 +10,7 @@ import org.http4s.{Method, Request, Response, Status}
 import org.mongodb.scala.{Document, MongoClient, MongoCollection, MongoDatabase}
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Succeeded}
 import org.testcontainers.containers.MongoDBContainer
 import org.testcontainers.utility.DockerImageName
 
@@ -60,7 +60,7 @@ class ListMessageSpec extends AnyFunSuite
   test("should return all messages in the database") {
     val response: Task[Response[Task]] = MessageApiRoutes(new MessageApiServiceIO(collection)).orNotFound.run(
       Request(method = Method.GET, uri = uri"/list_messages" ).withEntity(someValidCreateMessage))
-    assert(check[String](response, Status.Ok, Some(someValidCreateResponse))).shouldBe(true)
+    assert(check[String](response, Status.Ok, Some(someValidCreateResponse))).shouldBe(Succeeded)
   }
 
 }

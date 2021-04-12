@@ -10,7 +10,7 @@ import org.http4s.{Method, Request, Response, Status}
 import org.mongodb.scala.{Document, MongoClient, MongoCollection, MongoDatabase}
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Succeeded}
 import org.testcontainers.containers.MongoDBContainer
 import org.testcontainers.utility.DockerImageName
 
@@ -59,8 +59,8 @@ class RetrieveMessageSpec extends AnyFunSuite
 
   test("should return a specific message based on the request url parameter") {
     val response: Task[Response[Task]] = MessageApiRoutes(new MessageApiServiceIO(collection)).orNotFound.run(
-      Request(method = Method.POST, uri = uri"/create_message" ).withEntity(someValidCreateMessage))
-    assert(check[String](response, Status.Ok, Some(someValidCreateResponse))).shouldBe(true)
+      Request(method = Method.GET, uri = uri"/message/madam" ))
+    assert(check[String](response, Status.Ok, Some(someValidCreateResponse))).shouldBe(Succeeded)
   }
 
 }
