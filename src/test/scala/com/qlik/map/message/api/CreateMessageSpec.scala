@@ -66,7 +66,7 @@ override def beforeAll {
   test("should return a status of created and response of created message with a boolean representing if word is palindrome of not") {
     val response: Task[Response[Task]] = MessageApiRoutes(new MessageApiServiceIO(collection)).orNotFound.run(
       Request(method = Method.POST, uri = uri"/create_message" ).withEntity(someValidCreateMessage))
-    checkFeedBack[String](response, Status.Ok, Some(someValidCreateResponse))
+    assert(checkFeedBack[String](response, Status.Ok, Some(someValidCreateResponse))).shouldBe (true)
   }
 
 

@@ -60,7 +60,7 @@ class RetrieveMessageSpec extends AnyFunSuite
   test("should return a specific message based on the request url parameter") {
     val response: Task[Response[Task]] = MessageApiRoutes(new MessageApiServiceIO(collection)).orNotFound.run(
       Request(method = Method.POST, uri = uri"/create_message" ).withEntity(someValidCreateMessage))
-    check[String](response, Status.Ok, Some(someValidCreateResponse))
+    assert(check[String](response, Status.Ok, Some(someValidCreateResponse))).shouldBe(true)
   }
 
 }

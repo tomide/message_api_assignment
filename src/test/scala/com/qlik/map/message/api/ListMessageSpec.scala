@@ -60,7 +60,7 @@ class ListMessageSpec extends AnyFunSuite
   test("should return all messages in the database") {
     val response: Task[Response[Task]] = MessageApiRoutes(new MessageApiServiceIO(collection)).orNotFound.run(
       Request(method = Method.GET, uri = uri"/list_messages" ).withEntity(someValidCreateMessage))
-    check[String](response, Status.Ok, Some(someValidCreateResponse))
+    assert(check[String](response, Status.Ok, Some(someValidCreateResponse))).shouldBe(true)
   }
 
 }

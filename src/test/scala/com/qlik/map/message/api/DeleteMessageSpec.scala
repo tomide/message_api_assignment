@@ -62,7 +62,7 @@ class DeleteMessageSpec extends AnyFunSuite
   test("should delete message based on request url") {
     val response: Task[Response[Task]] = MessageApiRoutes(new MessageApiServiceIO(collection)).orNotFound.run(
       Request(method = Method.DELETE, uri = uri"/madam" ))
-    check[String](response, Status.Ok, Some(someValidCreateResponse))
+    assert(check[String](response, Status.Ok, Some(someValidCreateResponse))).shouldBe (true)
 
   }
 

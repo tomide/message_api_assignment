@@ -59,10 +59,9 @@ class UpdateMessageSpec extends AnyFunSuite
   }
 
   test("should update old message with new message") {
-    import com.qlik.map.message.messageApiService._
     val response: Task[Response[Task]] = MessageApiRoutes(new MessageApiServiceIO(collection)).orNotFound.run(
       Request(method = Method.PUT, uri = uri"/madam" ).withEntity(someValidCreateMessage))
-    check[String](response, Status.Ok, Some(someValidCreateMessage))
+    assert(check[String](response, Status.Ok, Some(someValidCreateMessage))).shouldBe(true)
 
   }
 
