@@ -10,7 +10,7 @@
 `docker push localhost:5000/messageservice`
 5. If you have not created an outside network yet, then run command. else skip to next step
 `docker network create outside`
-4. Start MessageService\
+6. Start MessageService\
 `docker-compose up`
 
 Now you can hit our endpoint at `localhost:8080/create_message`
