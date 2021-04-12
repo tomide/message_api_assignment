@@ -3,7 +3,7 @@ package com.qlik.map.message.api
 import java.util.Calendar
 
 import com.qlik.map.message.api.MessageApiUtil.{compressMessage, isWordPalindrome, isWordValid, md5Harsher}
-import com.qlik.map.message.api.database.DbQuery.{insertCommand, retrieveCommand, updateCommand}
+import com.qlik.map.message.api.database.DbQuery.{deleteCommand, insertCommand, retrieveCommand, updateCommand}
 import com.qlik.map.message.messageApiService._
 import com.typesafe.scalalogging.StrictLogging
 import monix.eval.Task
@@ -11,9 +11,10 @@ import org.mongodb.scala.model.Filters
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Projections._
 import org.mongodb.scala.result.{DeleteResult, UpdateResult}
-import org.mongodb.scala.{Completed, Document, MongoCollection, Observer}
+import org.mongodb.scala.{Completed, Document, MongoCollection, Observer, SingleObservable}
 import monix.execution.Scheduler.Implicits.global
-import scala.concurrent.{Future}
+
+import scala.concurrent.Future
 
 
 
@@ -76,35 +77,21 @@ class MessageApiServiceIO(collection: MongoCollection[Document]) extends Message
       case Left(e) => Task.now(feedBack(s"message : '${req.oldMessage}' not in database"))
     }
 
-//    var status : Boolean = false
-//    updateObservable.subscribe(new Observer[UpdateResult] {
-//      override def onNext(result: UpdateResult): Unit = logger.info(s""" message - ${req.oldMessage} was updated with ${req.newMessage} -- ${Calendar.getInstance().getTime}""")
-//      override def onError(e: Throwable): Unit = logger.error(s" onError:  $e   -- ${Calendar.getInstance().getTime} ") ; status = true
-//      override def onComplete(): Unit = logger.info(s"**** completed transmission on requested ${req.oldMessage} -- ${Calendar.getInstance().getTime}")
-//    })
-//    if (status) {
-//      status = false
-//      Task.now(feedBack(s"message : '${req.oldMessage}' not in database"))
-//    } else {
-//      Task.now(feedBack(s"old_message:- ${req.oldMessage} has been updated with new_message :- ${req.newMessage}"))
-//    }
   }
 
   override def deleteMessage(req: deleteRequest): Task[feedBack] = {
     val document = Document("_id" -> md5Harsher(req.message))
     val deleteObservable = collection.deleteMany(document)
-    var status : Boolean = false
-    deleteObservable.subscribe(observer = new Observer[DeleteResult] {
-      override def onNext(result: DeleteResult): Unit = logger.info(s""" message - ${req.message} was deleted  -- ${Calendar.getInstance().getTime}""")
-      override def onError(e: Throwable): Unit = logger.error(s" onError:  $e   -- ${Calendar.getInstance().getTime} ") ; status = true
-      override def onComplete(): Unit = logger.info(s"**** completed transmission on requested ${req.message} -- ${Calendar.getInstance().getTime}")
-    })
-    if (status) {
-      status = false
-      Task.now(feedBack(s"message : '${req.message}' not in database"))
-    } else {
-      Task.now(feedBack(s"message: ${req.message} was deleted"))
+
+    val resultEither = for {
+      result <- deleteCommand(deleteObservable)
+    } yield result
+
+    resultEither match {
+      case Right(c) => Task.now(feedBack(s"message: ${req.message} was deleted"))
+      case Left(e) => Task.now(feedBack(s"message : 'error during delete process"))
     }
+
   }
 
   override def listAllMessages(): Task[Seq[feedBack]] = {

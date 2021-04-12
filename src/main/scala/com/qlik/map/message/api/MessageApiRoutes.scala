@@ -90,14 +90,15 @@ object MessageApiRoutes extends StrictLogging {
           case _ => BadRequest(ResponseError("badly formed request. please check api documentation").asJson)
         }
 
-      case req @ DELETE -> Root  =>
+      case DELETE -> Root / message =>
         (for {
-          decodedReq <- req.as[deleteRequest]
-          allObservables <- messageService.deleteMessage(decodedReq)
+          _ <- messageService.retrieveMessage(retrieveRequest(message))
+          allObservables <- messageService.deleteMessage(deleteRequest(message))
           allMessages <- Ok(allObservables)
         } yield allMessages).onErrorHandleWith {
           case e: NoRecordFound =>  NotFound(ResponseError(e.message).asJson)
           case e: InvalidWordError.type =>  NotAcceptable(ResponseError(e.message).asJson)
+          case e: NoSuchElementException => NotFound(ResponseError(s"message :- $message not in database").asJson)
           case _ => BadRequest(ResponseError("badly formed request. please check api documentation").asJson)
         }
 

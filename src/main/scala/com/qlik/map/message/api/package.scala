@@ -32,9 +32,9 @@ package object messageApiService {
   implicit val updateMessageDecoder: EntityDecoder[Task, updateRequest] = jsonOf[Task, updateRequest]
   implicit val updateMessageEncoder: EntityEncoder[Task, updateRequest] = jsonEncoderOf[Task, updateRequest]
 
-  case class deleteRequest(message: String, reason: String)
-  implicit val deleteMessageDecoder: EntityDecoder[Task, deleteRequest] = jsonOf[Task, deleteRequest]
-  implicit val userRequestEntityEncoder: EntityEncoder[Task, deleteRequest] = jsonEncoderOf[Task, deleteRequest]
+  case class deleteRequest(message: String) extends AnyVal
+  implicit val deleteMessageDecoder: Decoder[deleteRequest] = deriveUnwrappedDecoder
+  implicit val userRequestEntityEncoder: Encoder[deleteRequest] = deriveUnwrappedEncoder
 
   /**
    * Response ADTs

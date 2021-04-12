@@ -5,7 +5,7 @@ import java.util.Calendar
 import com.qlik.map.message.api.MessageApiUtil.{compressMessage, isWordPalindrome, isWordValid, md5Harsher}
 import com.qlik.map.message.messageApiService.{InvalidWordError, createRequest, feedBack, retrieveResponse}
 import monix.eval.Task
-import org.mongodb.scala.result.UpdateResult
+import org.mongodb.scala.result.{DeleteResult, UpdateResult}
 import org.mongodb.scala.{Completed, Document, Observer, SingleObservable}
 
 import scala.concurrent.duration.Duration
@@ -59,11 +59,11 @@ object DbQuery {
     resultEither
   }
 
-  def deleteCommand(insertObservable: SingleObservable[Completed]): Either[Throwable, Completed] = {
+  def deleteCommand(deleteObservable: SingleObservable[DeleteResult]): Either[Throwable, DeleteResult] = {
 
-    val f: Future[Completed] = insertObservable.toFuture()
+    val f: Future[DeleteResult] = deleteObservable.toFuture()
 
-    val result: Try[Completed] = Await.ready(f, Duration.Inf).value.get
+    val result: Try[DeleteResult] = Await.ready(f, Duration.Inf).value.get
 
     val resultEither = result match {
       case Success(t) => Right(t)
