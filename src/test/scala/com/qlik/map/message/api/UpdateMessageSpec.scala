@@ -61,7 +61,7 @@ class UpdateMessageSpec extends AnyFunSuite
   test("should update old message with new message") {
     val response: Task[Response[Task]] = MessageApiRoutes(new MessageApiServiceIO(collection)).orNotFound.run(
       Request(method = Method.PUT, uri = uri"/message/madam" ).withEntity(someValidCreateMessage))
-    assert(check[String](response, Status.Ok, Some(someValidCreateMessage))).shouldBe(Succeeded)
+    check[String](response, Status.Ok, Some(someValidCreateMessage))
 
   }
 
