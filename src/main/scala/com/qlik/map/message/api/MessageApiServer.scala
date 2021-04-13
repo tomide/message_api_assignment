@@ -14,6 +14,7 @@ import org.http4s.metrics.dropwizard.Dropwizard
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.server.middleware._
 import scala.collection.immutable.Seq
+import monix.execution.Scheduler.Implicits.global
 
 /**
  * Main entry point to the Application. This object Binds the config parameter for bother server and database, routes, and connection to database together. it also the

@@ -1,11 +1,12 @@
 package com.qlik.map.message.api.database
 
-import com.qlik.map.message.messageApiService.retrieveResponse
+import com.qlik.map.message.api.MessageApiUtil.{compressMessage, isWordPalindrome, isWordValid, md5Harsher}
+import com.qlik.map.message.messageApiService.{createRequest, feedBack, retrieveResponse}
 import org.mongodb.scala.result.{DeleteResult, UpdateResult}
-import org.mongodb.scala.{Completed, Document, Observable, SingleObservable}
+import org.mongodb.scala.{Completed, Document, MongoCollection, Observable, SingleObservable}
 
 import scala.concurrent.duration.Duration
-import scala.concurrent.{Await}
+import scala.concurrent.Await
 import scala.util.{Failure, Success, Try}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -30,17 +31,20 @@ object DbQuery {
    resultEither
  }
 
-  def retrieveCommand(returnedDocument: SingleObservable[Document]): Future[retrieveResponse] = {
+  def retrieveCommand(returnedDocument: SingleObservable[Document]): Either[Throwable, Seq[(String, Boolean)]] = {
 
-    //update api for mongodb collection does not return error if document does not exist
-        val listMapScores = returnedDocument.map(doc => (doc("message").asString.getValue,
+    val f  = returnedDocument.map(doc => (doc("message").asString.getValue,
           doc("is_word_palindrome").asBoolean().getValue)).collect().toFuture()
-        for {
-          result <- listMapScores.map(contentSequence => {
-            val contentTuple = contentSequence.head
-            retrieveResponse(contentTuple._1, contentTuple._2)
-          })
-        } yield result
+
+    val result: Try[Seq[(String, Boolean)]] = Await.ready(f, Duration.Inf).value.get
+
+    val resultEither = result match {
+
+      case Success(t) => Right(t)
+      case Failure(e) => Left(e)
+    }
+    resultEither
+
   }
 
   def updateCommand(insertObservable: SingleObservable[UpdateResult]): Either[Throwable, UpdateResult] = {
@@ -76,5 +80,30 @@ object DbQuery {
     resultEither
   }
 
+  def createDocument(cm: createRequest, collection: MongoCollection[Document]): Either[String, Map[String,SingleObservable[Completed]]] = {
+    val compressedMessage = compressMessage(cm.message.toLowerCase())
+    if (isWordValid(compressedMessage)) {
+      val _id = md5Harsher(cm.message)
+      val message = cm.message.toLowerCase()
+      val palindrome = isWordPalindrome(compressedMessage)
+      val document = Seq(Document("_id" -> _id, "message" -> message, "is_word_palindrome" -> palindrome))
+      val insertObservable = collection.insertMany(document)
+      Right(Map(_id + "_" + cm.message -> insertObservable))
+    }
+    else Left(cm.message)
+  }
+
+  def processDocument(newReq: Either[String, Map[String,SingleObservable[Completed]]]) : feedBack = {
+
+    newReq match {
+      case Right(c) => {
+        insertCommand(c.values.head) match {
+          case Right(_) => feedBack(s"_id : ${c.keys.head.split("_").head} , message: ${c.keys.head.split("_").tail.head}, status: created")
+          case Left(e) => feedBack(s"message ${c.keys.head.split("_").tail.head} status: failed with error : $e")
+        }
+      }
+      case Left(e) => feedBack(s"message: $e status : invalid message format")
+    }
+  }
 
 }

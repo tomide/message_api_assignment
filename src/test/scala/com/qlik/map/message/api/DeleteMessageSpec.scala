@@ -1,5 +1,6 @@
 package com.qlik.map.message.api
 
+import com.qlik.map.message.api.MessageApiUtil.md5Harsher
 import io.circe.Decoder.decodeString
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
 import io.circe.{Decoder, Encoder}
@@ -60,9 +61,11 @@ class DeleteMessageSpec extends AnyFunSuite
   }
 
   test("should delete message based on request url") {
+    val messageId = md5Harsher("madam")
+
     val response: Task[Response[Task]] = MessageApiRoutes(new MessageApiServiceIO(collection)).orNotFound.run(
-      Request(method = Method.DELETE, uri = uri"/message/madam" ))
-    assert(check[String](response, Status.Ok, Some(someValidCreateResponse))).shouldBe (Succeeded)
+      Request(method = Method.DELETE, uri = uri"/929-668298-11863-125-89122-76-108-12711737-53" ))
+    check[String](response, Status.Ok, Some(someValidCreateResponse))
 
   }
 

@@ -22,7 +22,7 @@ trait TestFixture {
   val aValidDocument = Document("_id" -> md5Harsher("madam"))
   val someValidMessage = "palindrome"
   val someNotValidMessage = "palindrome"
-  val someValidCreateMessage = s"""{"message": "${someValidMessage}"}"""
+  val someValidCreateMessage = s"""[{"message": "${someValidMessage}"}]"""
   val someValidCreateResponse = s""" {"response": "created_word: $someValidMessage, is_word_palindrome: false"}"""
   val someNotValidCreateResponse = s""" {"response": "created_word: $someNotValidMessage, is_word_palindrome: false"}"""
 }

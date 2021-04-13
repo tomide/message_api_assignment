@@ -24,7 +24,7 @@ package object messageApiService {
   implicit val createMessageDecoder: Decoder[createRequest] = deriveUnwrappedDecoder
   implicit val createMessageEncoder: Encoder[createRequest] = deriveUnwrappedEncoder
 
-  case class retrieveRequest(message: String) extends AnyVal
+  case class retrieveRequest(messageId: String) extends AnyVal
   implicit val retrieveMessageDecoder: Decoder[retrieveRequest] = deriveUnwrappedDecoder
   implicit val retrieveMessageEncoder: Encoder[retrieveRequest] = deriveUnwrappedEncoder
 
@@ -43,7 +43,7 @@ package object messageApiService {
   implicit val feedBackDecoder: Decoder[feedBack] = deriveUnwrappedDecoder
   implicit val feedBackEncoder: Encoder[feedBack] = deriveUnwrappedEncoder
 
-  case class retrieveResponse(word: String, Palindrome: Boolean)
+  case class retrieveResponse(message: String, is_word_palindrome: Boolean)
   implicit val retrieveResponseDecoder: EntityDecoder[Task, retrieveResponse] = jsonOf[Task, retrieveResponse]
   implicit val retrieveResponseEncoder: EntityEncoder[Task, retrieveResponse] = jsonEncoderOf[Task, retrieveResponse]
 

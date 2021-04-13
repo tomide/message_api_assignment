@@ -1,6 +1,6 @@
 package com.qlik.map.message.api
 
-import com.qlik.map.message.api.MessageApiUtil.{compressMessage, isWordPalindrome, isWordValid, md5Harsher}
+import com.qlik.map.message.api.MessageApiUtil.{compressMessage, isWordPalindrome, md5Harsher}
 import com.qlik.map.message.api.database.DbQuery._
 import com.qlik.map.message.messageApiService._
 import com.typesafe.scalalogging.StrictLogging
@@ -11,11 +11,14 @@ import org.mongodb.scala.model.Projections._
 import org.mongodb.scala.{Document, MongoCollection}
 
 trait MessageApiService {
-  def createMessage(userMessage: createRequest): Task[feedBack]
-  def retrieveMessage(userMessage: retrieveRequest): Task[retrieveResponse]
-  def updateMessage(userMessage: updateRequest): Task[feedBack]
+  def createMessage(userMessage: Seq[createRequest]): Task[Seq[feedBack]]
+
+  def retrieveMessage(userMessage: Seq[retrieveRequest]): Task[Seq[feedBack]]
+
+  def updateMessage(userMessage: Seq[updateRequest]): Task[Seq[feedBack]]
+
   def deleteMessage(userMessage: deleteRequest): Task[feedBack]
-  def listAllMessages(): Task[Seq[feedBack]]
+
 }
 
 
@@ -25,70 +28,101 @@ object MessageApiService {
 
 class MessageApiServiceIO(collection: MongoCollection[Document]) extends MessageApiService with StrictLogging {
 
-  override def createMessage(req: createRequest): Task[feedBack] = {
-    val compressedMessage = compressMessage(req.message.toLowerCase())
-    if (isWordValid(compressedMessage)) {
-      val _id = md5Harsher(req.message)
-      val message = req.message.toLowerCase()
-      val palindrome = isWordPalindrome(compressedMessage)
-      val document = Seq(Document("_id" -> _id, "message" -> message, "is_word_palindrome" -> palindrome))
-      val insertObservable = collection.insertMany(document)
+  override def createMessage(req: Seq[createRequest]): Task[Seq[feedBack]] = {
 
-      val resultEither = for {
-        result <- insertCommand(insertObservable)
-      } yield result
+    val validDocumentEither = for {
+      res <- req.map(d => processDocument(createDocument(d, collection)))
+    } yield res
+
+    Task.now(validDocumentEither)
+  }
+
+  override def retrieveMessage(req: Seq[retrieveRequest]): Task[Seq[feedBack]] = {
+
+    val result = req.map { r =>
+      val returnedDocument = collection.find(equal("_id", r.messageId))
+        .projection(fields(include("message", "is_word_palindrome"))).first()
+
+      val resultEither = retrieveCommand(returnedDocument)
+
       resultEither match {
-        case Right(c) => Task.now(feedBack(s"created_message: $message, is_word_palindrome: ${palindrome.toString}"))
-        case Left(e) => Task.raiseError(MessageSavingError("message already exist in database"))
+        case Right(d) =>
+          if (d.nonEmpty && req.size > 1) {
+            Task.now(feedBack(s"message : ${d.head._1}, is_word_palindrome : ${d.head._2}"))
+          }
+          else if (d.nonEmpty && req.size == 1) {
+            Task.raiseError(NoRecordFound(s"no record found for messageId :- ${r.messageId}"))
+          }
+          else {
+            Task.now(feedBack(s"message : ${r.messageId}, no record found"))
+          }
+        case Left(e) => Task.raiseError(MessageSavingError("MongoDb Database Issues"))
       }
     }
-    else Task.raiseError(InvalidWordError)
+    Task.sequence(result)
   }
 
-  override def retrieveMessage(req: retrieveRequest): Task[retrieveResponse] = {
+  override def updateMessage(req: Seq[updateRequest]): Task[Seq[feedBack]] = {
 
-    val returnedDocument = collection.find(equal("_id", md5Harsher(req.message.toLowerCase())))
-      .projection(fields(include("message", "is_word_palindrome"))).first()
-    Task.fromFuture(retrieveCommand(returnedDocument))
+    val result = req.map { r => {
+      val oldDocument = collection.find(equal("_id", md5Harsher(r.oldMessage)))
+        .projection(fields(include("message", "is_word_palindrome"))).first()
 
-  }
+      val oldResultEither = retrieveCommand(oldDocument)
 
-  override def updateMessage(req: updateRequest): Task[feedBack] = {
-
-    val updateDocument = Document("$set" -> Document("message" -> req.newMessage.toLowerCase()))
-    val updateObservable = collection.updateOne(Filters.eq("_id", md5Harsher(req.oldMessage.toLowerCase())), updateDocument)
-    val resultEither = for {
-      result <- updateCommand(updateObservable)
-    } yield result
-    resultEither match {
-      case Right(c) => Task.now(feedBack(s"old_message:- ${req.oldMessage} has been updated with new_message :- ${req.newMessage}"))
-      case Left(e) => Task.now(feedBack(s"message : 'error during update process"))
+      val response = oldResultEither match {
+        case Right(value) =>
+          if (value.nonEmpty) {
+            val updateDocument = Document("$set" -> Document("message" -> r.newMessage.toLowerCase(),
+              "is_word_palindrome" -> isWordPalindrome(compressMessage(r.newMessage))))
+            val updateObservable = collection.updateOne(Filters.eq("_id", md5Harsher(r.oldMessage.toLowerCase())), updateDocument)
+            val resultEither = for {
+              result <- updateCommand(updateObservable)
+            } yield result
+            resultEither match {
+              case Right(c) => Task.now(feedBack(s"messageId :- ${r.oldMessage} has been updated with new_message :- ${r.newMessage}"))
+              case Left(e) => Task.now(feedBack(s"error_message : Db failed during Update"))
+            }
+          }
+          else {
+            Task.now(feedBack(s"old_messages :- ${r.oldMessage} was added to the database "))
+          }
+      }
+      response
     }
+    }
+
+    Task.sequence(result)
 
   }
 
   override def deleteMessage(req: deleteRequest): Task[feedBack] = {
-    val document = Document("_id" -> md5Harsher(req.message.toLowerCase()))
-    val deleteObservable = collection.deleteMany(document)
-    val resultEither = for {
-      result <- deleteCommand(deleteObservable)
-    } yield result
-    resultEither match {
-      case Right(c) => Task.now(feedBack(s"message: ${req.message} was deleted"))
-      case Left(e) => Task.now(feedBack(s"message : 'error during delete process"))
+
+    val oldDocument = collection.find(equal("_id", req.message))
+      .projection(fields(include("message", "is_word_palindrome"))).first()
+
+    val ResultEither = retrieveCommand(oldDocument)
+
+    val response = ResultEither match {
+      case Right(value) =>
+        if (value.nonEmpty) {
+          val document = Document("_id" -> req.message)
+
+          val deleteObservable = collection.deleteMany(document)
+          val resultEither = for {
+            result <- deleteCommand(deleteObservable)
+          } yield result
+          resultEither match {
+            case Right(c) => Task.now(feedBack(s"message: ${req.message} was deleted"))
+            case Left(e) => Task.now(feedBack(s"message : 'error during delete process"))
+          }
+        }
+        else {
+          Task.raiseError(NoRecordFound(s"messageId : not Found"))
+        }
     }
 
-  }
-
-  override def listAllMessages(): Task[Seq[feedBack]] = {
-    val observable = collection.find().map(x => x.toJson())
-    val resultEither = for {
-      result <- getAllMessageCommand(observable)
-    } yield result
-    resultEither match {
-      case Right(c) => if (c.nonEmpty) Task.now(c.map (d => feedBack(d.replaceAll("\"", "")))) else Task.now(Seq(feedBack("no item in database")))
-      case Left(e) => Task.now(Seq(feedBack(s"message : 'error during retrieval process")))
-    }
+    response
 
   }
 
