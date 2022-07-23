@@ -1,2 +1,2 @@
-# message_api_assignment
+# message_api
 This endpoint creates, retrieves, update and delete messages (qlik)
